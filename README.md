@@ -1,10 +1,9 @@
 # ETL Pipeline Json Files -> Pandas -> PostgresDB
 
-![Build Status](https://travis-ci.org/joemccann/dillinger.svg?branch=master)
 
 Given a **song** data set and a user **events** data set, this code project extracts the json data from song json files and dumps it into a pandas dataframe to be filterd and transformed before being bulk inserted into a postgres database.
 
-[Link to Excel Documentation for the ETL Process](https://drive.google.com/file/d/1LtZbfZwqOBykxgyA2CegeyaXsQlMR1Ih/view?usp=sharing)
+[Link to Excel Documentation for the ETL Process](https://drive.google.com/file/d/1amL35lKId6jjRxZAdXvKhsrlplXUR_uy/view?usp=sharing)
 
 | ETL PROCESS FOR SPARKIFY 	|                  	|                 	|                            	|                    	|                 	|                	|                                                                             	|
 |--------------------------	|------------------	|-----------------	|----------------------------	|--------------------	|-----------------	|----------------	|-----------------------------------------------------------------------------	|
