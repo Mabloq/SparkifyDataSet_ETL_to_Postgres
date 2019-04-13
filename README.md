@@ -23,7 +23,7 @@ Given a **song** data set and a user **events** data set, this code project extr
 | artist_latitude          	| number           	| yes             	| convert to 0 if null       	| lattitude          	| numeic(5)       	| NO             	| want to be able to filter by lattitude, including when not avail            	|
 | artist_longitude         	| number           	| yes             	| convert to 0 if null       	| longitude          	| numeric(5)      	| NO             	| want to be able to filter by lattitude, including when not avail            	|
 
-#log_data.json -> time table
+# log_data.json -> time table
 
 | Source Column            	| Source Data Type 	| Source Nullable 	| Transformation             	| Destination Column 	| Dest. Data Type 	| Dest. Nullable 	| Reason for transformation                                                   	|
 |--------------------------	|------------------	|-----------------	|----------------------------	|--------------------	|-----------------	|----------------	|-----------------------------------------------------------------------------	|
@@ -35,7 +35,7 @@ Given a **song** data set and a user **events** data set, this code project extr
 | ts                       	| datetime          |                 	| extract year from ts       	| year               	| smallint        	|                	|                                                                             	|
 | ts                       	| datetime          |                 	| extract dayofweek  from ts 	| weekday(0-6)       	| smallint        	|                	|                                                                             	|
 
-#log_data.json -> users table
+# log_data.json -> users table
 | Source Column            	| Source Data Type 	| Source Nullable 	| Transformation             	| Destination Column 	| Dest. Data Type 	| Dest. Nullable 	| Reason for transformation                                                   	|
 |--------------------------	|------------------	|-----------------	|----------------------------	|--------------------	|-----------------	|----------------	|-----------------------------------------------------------------------------	|
 | userId                   	| int              	|                 	|                            	| user_id            	| int             	|                	|                                                                             	|
@@ -44,7 +44,7 @@ Given a **song** data set and a user **events** data set, this code project extr
 | gender                   	|                  	|                 	|                            	| gender             	| text            	|                	|                                                                             	|
 | level                    	|                  	|                 	|                            	| level              	| varchar(10)     	|                	|                                                                             	|
 
-#log_data.json -> song plays table
+# log_data.json -> song plays table
 | Source Column            	| Source Data Type 	| Source Nullable 	| Transformation             	| Destination Column 	| Dest. Data Type 	| Dest. Nullable 	| Reason for transformation                                                   	|
 |--------------------------	|------------------	|-----------------	|----------------------------	|--------------------	|-----------------	|----------------	|-----------------------------------------------------------------------------	|
 | none                     	|                  	|                 	|                            	| songplay_id        	| serial          	|                	|                                                                             	|
