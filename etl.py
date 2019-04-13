@@ -1,4 +1,5 @@
 import os
+from io import StringIO
 import glob
 import psycopg2
 import pandas as pd
@@ -8,6 +9,15 @@ from transforms import transform_time
 
 
 def gen_data_arr(filepath):
+    """
+    Extracts json data from each file in filepath and then append it to data list
+
+    Parameters:
+    filepath (list): list of string type filepath of each song json doc
+
+    Returns:
+    list:list of json data
+    """
     data = []
     for f in filepath:
         with open(f) as json_data:
@@ -16,6 +26,15 @@ def gen_data_arr(filepath):
 
 
 def multi_json_obj(filepath):
+    """
+    Extracts json data from each event-log file in filepath and then append it to data list
+
+    Parameters:
+    filepath (list[str]): list of string type filepath of each song json doc
+
+    Returns:
+    list: list of json data
+    """
     data = []
     for f in filepath:
         for line in open(f, mode="r"):
@@ -24,6 +43,14 @@ def multi_json_obj(filepath):
 
 
 def process_song_file(cur, filepath):
+    """
+    Strategy pattern like function passed into process_data function, used to transform song_data files
+    into appropriate format and then insert into sparkifyDB tables include (songs, artists)
+
+    Parameters:
+    curr: live psycopg2 cursor used to insert into db
+    filepath (list[str]): list of string type filepath of each song json doc
+    """
     # ===============1.) Load json filedata int song arr =====================
 
     songs = gen_data_arr(filepath)
@@ -54,6 +81,14 @@ def process_song_file(cur, filepath):
 
 
 def process_log_file(cur, filepath):
+    """
+    Strategy pattern like function passed into process_data function, used to transform event_log data files
+    into appropriate format and then insert into sparkifyDB tables include (users, time, songplays)
+
+    Parameters:
+    curr: live psycopg2 cursor used to insert into db
+    filepath (list[str]): list of string type filepath of each song json doc
+    """
     # ===============1.) Load json filedata int logs arr =====================
     #
     # ========================================================================
@@ -61,13 +96,13 @@ def process_log_file(cur, filepath):
     # store json data in logs arr
     logs = multi_json_obj(filepath)
 
-    # ===============2.) CREATE time_df DATAFRAME AND INSERT to time TABLE =====================
+    # ===============2.) CREATE time_df DATAFRAME, Extract granular date data AND INSERT to time TABLE =====================
     #
     # =========================================================================================
     time_df = pd.DataFrame(logs)
     # filter by NextSong action
     time_df.loc[time_df['page'] == 'NextSong']
-    # use imported transform_time(time_df) function
+    # Extract granular time data from timestamps and transform the timetable
     time_df = transform_time(time_df)
     # build bulk value time_arg string to avoid overhead of multiple execute statements
     time_args_str = ','.join(cur.mogrify("(%s,%s,%s,%s,%s,%s,%s)", x).decode("utf-8") for x in time_df)
@@ -79,18 +114,18 @@ def process_log_file(cur, filepath):
     # =========================================================================================
     # load user table
     user_df = pd.DataFrame(logs)
-    # filter out people who are logged out and drop duplicates on UserId (even though taken care of with ON CONFLICT in SQL)
-    user_df = user_df.loc[user_df['auth'] != 'Logged Out'].drop_duplicates('userId')
+    # filter out people who are logged out
+    user_df = user_df.loc[user_df['auth'] != 'Logged Out']
+
     # recreate filtered dataframe with approp. columns for insertion
     user_df = pd.DataFrame(user_df, columns=['userId', 'firstName', 'lastName', 'gender', 'level'])
-    # covert users to list of tuples to build bulk value arg strings
-    user_df = [tuple(x) for x in user_df.values]
-    # build bulk value user_args string to avoid overhead of multiple execute statements
-    user_args_str = ','.join(cur.mogrify("(%s,%s,%s,%s,%s)", x).decode("utf-8") for x in user_df)
-    # bulk insert users
-    cur.execute(user_table_insert % user_args_str)
+    #     data = StringIO()
+    for index, row in user_df.iterrows():
+        row = row.tolist()
+        row = tuple(row)
+        cur.execute(user_table_insert, row)
 
-    # ========================3.) CREAT songplays_df and INSERT to songplays TABLE ===========================================
+    # ========================3.) CREATE songplays_df and INSERT to songplays TABLE ===========================================
     #
     # =================================================================================================
 
@@ -126,6 +161,16 @@ def process_log_file(cur, filepath):
 
 
 def process_data(cur, conn, filepath, func):
+    """
+    Strategy pattern like function that takes a particular func argument to process and insert different types of data
+    into diffrent types of tables in sparkifydb
+
+    Parameters:
+    curr: live psycopg2 cursor used to insert into db
+    conn: live psycopg2 cursor used to connect and commit to our db
+    filepath (str): filepath to recursively crawl json data files from
+    func (function): strategy function that processes and inserts data into our database
+    """
     # get all files matching extension from directory
     all_files = []
     for root, dirs, files in os.walk(filepath):

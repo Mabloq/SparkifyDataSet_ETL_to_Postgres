@@ -9,7 +9,7 @@ time_table_drop = "DROP TABLE IF EXISTS time"
 
 songplay_table_create = ("""
     CREATE TABLE IF NOT EXISTS songplays 
-        (songplay_id serial, 
+        (songplay_id serial PRIMARY KEY, 
          start_time bigint NOT NULL,
          user_id varchar(20) NOT NULL,
          level text NOT NULL,
@@ -20,57 +20,53 @@ songplay_table_create = ("""
          user_agent text NOT NULL,
          UNIQUE (start_time, user_id)
          );
-       
+
 """)
 
 user_table_create = ("""
     CREATE TABLE IF NOT EXISTS users
-        (user_id varchar(20) NOT NULL,
+        (user_id varchar(20) NOT NULL PRIMARY KEY,
          first_name text NOT NULL,
          last_name text NOT NULL,
          gender text NOT NULL,
-         level text NOT NULL,
-         UNIQUE(user_id)
+         level text NOT NULL
         );
-        
+
 """)
 
 song_table_create = ("""
     CREATE TABLE IF NOT EXISTS songs
-        (song_id varchar(20),
+        (song_id varchar(20) PRIMARY KEY,
          title text,
          artist_id varchar(20),
          year smallint,
-         duration numeric(10,5),
-         UNIQUE(song_id)
+         duration numeric(10,5)
         );
-        
+
 """)
 
 artist_table_create = ("""
     CREATE TABLE IF NOT EXISTS artists
-        (artist_id varchar(20) NOT NULL,
+        (artist_id varchar(20) NOT NULL PRIMARY KEY,
          name text NOT NULL,
          location text NOT NULL,
          latitude numeric(10,5) NOT NULL,
-         longitude numeric(10,5) NOT NULL,
-         UNIQUE(artist_id)
+         longitude numeric(10,5) NOT NULL
         )
-        
+
 """)
 
 time_table_create = ("""
     CREATE TABLE IF NOT EXISTS time
-        (start_time bigint NOT NULL,
+        (start_time bigint NOT NULL PRIMARY KEY,
          hour smallint NOT NULL,
          day smallint NOT NULL,
          week smallint NOT NULL,
          month smallint NOT NULL,
          year smallint NOT NULL,
-         weekday smallint NOT NULL,
-         UNIQUE(start_time)
+         weekday smallint NOT NULL
         )
-        
+
 """)
 
 # INSERT RECORDS
@@ -100,10 +96,11 @@ user_table_insert = ("""
          gender,
          level
         )
-        VALUES
-        %s
-        ON CONFLICT(user_id)
-        DO NOTHING
+     VALUES
+        (%s,%s,%s,%s,%s)
+     ON CONFLICT(user_id)
+     DO UPDATE
+        SET level = EXCLUDED.level;
 """)
 
 song_table_insert = ("""
@@ -134,7 +131,6 @@ artist_table_insert = ("""
         DO NOTHING
 """)
 
-
 time_table_insert = ("""
     INSERT INTO time
         (start_time,
@@ -153,16 +149,16 @@ time_table_insert = ("""
 
 # FIND SONGS
 # get songid and artistid from song and artist tables
-    
+
 song_select = ("""
     SELECT s.song_id, a.artist_id
     FROM songs AS s
     JOIN artists AS a ON (s.artist_id = a.artist_id)
     WHERE a.name = (%s) AND s.title = (%s) AND s.duration = (%s)
 """)
-   
 
 # QUERY LISTS
 
-create_table_queries = [songplay_table_create, user_table_create, song_table_create, artist_table_create, time_table_create]
+create_table_queries = [songplay_table_create, user_table_create, song_table_create, artist_table_create,
+                        time_table_create]
 drop_table_queries = [songplay_table_drop, user_table_drop, song_table_drop, artist_table_drop, time_table_drop]

@@ -5,43 +5,48 @@ Given a **song** data set and a user **events** data set, this code project extr
 
 [Link to Excel Documentation for the ETL Process](https://drive.google.com/file/d/1amL35lKId6jjRxZAdXvKhsrlplXUR_uy/view?usp=sharing)
 
-| ETL PROCESS FOR SPARKIFY 	|                  	|                 	|                            	|                    	|                 	|                	|                                                                             	|
-|--------------------------	|------------------	|-----------------	|----------------------------	|--------------------	|-----------------	|----------------	|-----------------------------------------------------------------------------	|
-|                          	|                  	|                 	|                            	|                    	|                 	|                	|                                                                             	|
+# song_data.json -> songs table
 | Source Column            	| Source Data Type 	| Source Nullable 	| Transformation             	| Destination Column 	| Dest. Data Type 	| Dest. Nullable 	| Reason for transformation                                                   	|
-| song_data.json           	|                  	|                 	|                            	| songs              	|                 	|                	|                                                                             	|
+|--------------------------	|------------------	|-----------------	|----------------------------	|--------------------	|-----------------	|----------------	|-----------------------------------------------------------------------------	|
 | song_id                  	| string           	| no              	|                            	| song_id            	| varchar(20)     	| no             	|                                                                             	|
 | title                    	| string           	| no              	|                            	| title              	| varchar(100)    	| no             	|                                                                             	|
 | artist_id                	| sting            	| no              	|                            	| artist_id          	| varchar(20)     	| no             	|                                                                             	|
 | year                     	| number           	| no              	|                            	| year               	| int             	| no             	|                                                                             	|
 | duration                 	| number           	| no              	|                            	| duration           	| numeric(5)      	| no             	|                                                                             	|
-| song_data.json           	|                  	|                 	|                            	| artists            	|                 	|                	|                                                                             	|
+
+# song_data.json -> artists table
+| Source Column            	| Source Data Type 	| Source Nullable 	| Transformation             	| Destination Column 	| Dest. Data Type 	| Dest. Nullable 	| Reason for transformation                                                   	|
+|--------------------------	|------------------	|-----------------	|----------------------------	|--------------------	|-----------------	|----------------	|-----------------------------------------------------------------------------	|
 | artist_id                	| string           	| no              	|                            	| artist_id          	| varchar(20)     	| NO             	|                                                                             	|
 | artist_name              	| string           	| no              	|                            	| name               	| text            	| NO             	|                                                                             	|
 | artist_location          	| string           	| yes             	| convert to "NA"            	| location           	| text            	| NO             	| Want to be able to filter by location includeing when location is not avail 	|
 | artist_latitude          	| number           	| yes             	| convert to 0 if null       	| lattitude          	| numeic(5)       	| NO             	| want to be able to filter by lattitude, including when not avail            	|
 | artist_longitude         	| number           	| yes             	| convert to 0 if null       	| longitude          	| numeric(5)      	| NO             	| want to be able to filter by lattitude, including when not avail            	|
-| song_data.json           	|                  	|                 	|                            	| songs              	|                 	|                	|                                                                             	|
-| song_id                  	| string           	| no              	|                            	| song_id            	| varchar(20)     	| NO             	|                                                                             	|
-| title                    	| string           	| no              	|                            	| title              	| text            	| NO             	|                                                                             	|
-| artist_id                	| string           	| no              	|                            	| artist_id          	| varchar(20)     	| NO             	|                                                                             	|
-| year                     	| number           	| no              	|                            	| year               	| smallint        	| NO             	|                                                                             	|
-| duration                 	| number           	| no              	|                            	| duration           	| numeric(5)      	| NO             	|                                                                             	|
-| log_data.json            	|                  	|                 	|                            	| time               	|                 	|                	|                                                                             	|
-| ts                       	|                  	|                 	| convert to pd.to_datetime  	| start_time         	|                 	|                	|                                                                             	|
-| ts                       	|                  	|                 	| extract get hour from ts   	| hour               	| smallint        	|                	|                                                                             	|
-| ts                       	|                  	|                 	| extract get day from ts    	| day                	| smallint        	|                	|                                                                             	|
-| ts                       	|                  	|                 	| extract week from ts       	| week               	| smallint        	|                	|                                                                             	|
-| ts                       	|                  	|                 	| extract month from ts      	| month              	| smallint        	|                	|                                                                             	|
-| ts                       	|                  	|                 	| extract year from ts       	| year               	| smallint        	|                	|                                                                             	|
-| ts                       	|                  	|                 	| extract dayofweek  from ts 	| weekday(0-6)       	| smallint        	|                	|                                                                             	|
-| log_data.json            	|                  	|                 	|                            	| users              	|                 	|                	|                                                                             	|
+
+#log_data.json -> time table
+
+| Source Column            	| Source Data Type 	| Source Nullable 	| Transformation             	| Destination Column 	| Dest. Data Type 	| Dest. Nullable 	| Reason for transformation                                                   	|
+|--------------------------	|------------------	|-----------------	|----------------------------	|--------------------	|-----------------	|----------------	|-----------------------------------------------------------------------------	|
+| ts                       	| datetime          |                 	| convert to pd.to_datetime  	| start_time         	|                 	|                	|                                                                             	|
+| ts                       	| datetime          |                 	| extract get hour from ts   	| hour               	| smallint        	|                	|                                                                             	|
+| ts                       	| datetime          |                 	| extract get day from ts    	| day                	| smallint        	|                	|                                                                             	|
+| ts                       	| datetime          |                 	| extract week from ts       	| week               	| smallint        	|                	|                                                                             	|
+| ts                       	| datetime          |                 	| extract month from ts      	| month              	| smallint        	|                	|                                                                             	|
+| ts                       	| datetime          |                 	| extract year from ts       	| year               	| smallint        	|                	|                                                                             	|
+| ts                       	| datetime          |                 	| extract dayofweek  from ts 	| weekday(0-6)       	| smallint        	|                	|                                                                             	|
+
+#log_data.json -> users table
+| Source Column            	| Source Data Type 	| Source Nullable 	| Transformation             	| Destination Column 	| Dest. Data Type 	| Dest. Nullable 	| Reason for transformation                                                   	|
+|--------------------------	|------------------	|-----------------	|----------------------------	|--------------------	|-----------------	|----------------	|-----------------------------------------------------------------------------	|
 | userId                   	| int              	|                 	|                            	| user_id            	| int             	|                	|                                                                             	|
 | firstName                	|                  	|                 	|                            	| first_name         	| varchar(50)     	|                	|                                                                             	|
 | lastName                 	|                  	|                 	|                            	| last_name          	| varchar(50)     	|                	|                                                                             	|
 | gender                   	|                  	|                 	|                            	| gender             	| text            	|                	|                                                                             	|
 | level                    	|                  	|                 	|                            	| level              	| varchar(10)     	|                	|                                                                             	|
-| log_data.json            	|                  	|                 	|                            	| songplays          	|                 	|                	|                                                                             	|
+
+#log_data.json -> song plays table
+| Source Column            	| Source Data Type 	| Source Nullable 	| Transformation             	| Destination Column 	| Dest. Data Type 	| Dest. Nullable 	| Reason for transformation                                                   	|
+|--------------------------	|------------------	|-----------------	|----------------------------	|--------------------	|-----------------	|----------------	|-----------------------------------------------------------------------------	|
 | none                     	|                  	|                 	|                            	| songplay_id        	| serial          	|                	|                                                                             	|
 | ts                       	|                  	|                 	|                            	| start_time         	| bigint          	|                	|                                                                             	|
 | UserId                   	|                  	|                 	|                            	| user_id            	| varchar(20)     	|                	|                                                                             	|
